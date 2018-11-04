@@ -1,6 +1,13 @@
+
+
+
 #include <Arduino.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <esp_wifi.h>
+
+#define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
+#define TIME_TO_SLEEP  10       /* Time ESP32 will go to sleep (in seconds) */
 
 const char* ssid = "MEO-Casa";
 const char* pass = "2BC2355B2C";
@@ -15,78 +22,99 @@ const char* inTopic = "/jbeleza.tr@gmail.com/in";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
-char messages[50];
-int i=0;
+RTC_DATA_ATTR int i=0;
 
 void setupWifi(){
   delay(100);
-  Serial.print("\nConnecting to ");
-  Serial.println(ssid);
+  Serial.print("\nConnecting to wifi: " + String(ssid) + " ");
 
   WiFi.begin(ssid, pass);
 
   while(WiFi.status() != WL_CONNECTED){
     delay(100);
-    Serial.print("-");
+    Serial.print(".");
   }
 
-  Serial.print("\nConnected to ");
-  Serial.println(ssid);
+  Serial.println(" Connected.");
 }
 
 void reconnect(){
   while(!client.connected()){
-    Serial.print("\nConnecting to ");
-    Serial.println(broker);
+    Serial.print("Connecting to " + String(broker));
     if(client.connect(clientID, brokerUser, brokerPass)){
-      Serial.print("\nConnected to ");
-      Serial.println(broker);
-      client.subscribe(inTopic);
+      Serial.println(": Connected.");
+      //client.subscribe(inTopic);
     } else{
-      Serial.println("\nTrying to connect again");
+      Serial.println(": [Error] Not connected: " + String(client.state()) + " Wait 5 seconds before retry.");
       delay(5000);
     }
   }
 }
 
 //Send Data (Publisher)
-void publish(int value){
-  client.loop();
-  snprintf(messages, 75, "Value: %ld", value);
-  Serial.println("Sending: ");
+void publish(const char* topic, char* m){
+  char messages[strlen(m)];
+  snprintf(messages, (strlen(m)+1) , m);
+  Serial.print("Sending: ");
   Serial.println(messages);
-  client.publish(outTopic, messages);
+  client.publish(topic, messages);
 }
 
+/* void publish(int value){
+  char messages[50];
+  snprintf(messages, 75, "Value: %d", value);
+  Serial.print("Sending: ");
+  Serial.println(messages);
+  client.publish(outTopic, messages);
+} */
+
 //Receive Data (Subscriber)
-void callback(char* topic, byte* payload, unsigned int length){
+/* void callback(char* topic, byte* payload, unsigned int length){
   Serial.print("Received message: ");
   Serial.println(topic);
   for(int i=0; i<length; i++){
     Serial.print((char) payload[i]);
   }
   Serial.println();
-}
+} */
 
 //Setup MQTT
 void setupmqtt(){
   client.setServer(broker, port);
-  client.setCallback(callback);
+  //client.setCallback(callback);
 }
 
 void setup() {
-  delay(10000);
   Serial.begin(115200);
   setupWifi();
   setupmqtt();
-  delay(1000);
+  delay(100);
+
+  if(!client.connected()){
+    reconnect();
+    //client.loop();
+  }
+
+  char* mes = "Hello World!";
+
+  publish(outTopic, mes); // publish message in specific topic
+
+  delay(3000);  // delay is needed for server accept published message
+
+  esp_wifi_stop();
+
+  /*
+  First we configure the wake up source
+  We set our ESP32 to wake up every 10 seconds
+  */
+  esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+  Serial.println("Setup ESP32 to sleep for every " + String(TIME_TO_SLEEP) + " Seconds");
+
+  Serial.println("Going to sleep now");
+  Serial.flush(); 
+  esp_deep_sleep_start();
+  Serial.println("This will never be printed");
 }
 
 void loop() {
-  if(!client.connected()){
-    reconnect();
-  }
-  publish(i);
-  i++;
-  delay(1000);
 }
