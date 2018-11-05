@@ -55,8 +55,7 @@ void reconnect(){
 void publish(const char* topic, char* m){
   char messages[strlen(m)];
   snprintf(messages, (strlen(m)+1) , m);
-  Serial.print("Sending: ");
-  Serial.println(messages);
+  Serial.println("Sending: " + String(messages);
   client.publish(topic, messages);
 }
 
@@ -95,24 +94,26 @@ void setup() {
     //client.loop();
   }
 
+  // FUNCTION TO READ SENSORS DATA
+
+  // PUBLISH DATA DO MQTT SERVER
+  //--------------------------------------------------------------------------------
   char* mes = "Hello World!";
-
   publish(outTopic, mes); // publish message in specific topic
-
   delay(3000);  // delay is needed for server accept published message
+  //--------------------------------------------------------------------------------
 
   esp_wifi_stop();
 
-  /*
-  First we configure the wake up source
-  We set our ESP32 to wake up every 10 seconds
-  */
-  esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+  // DEEP SLEEP MODE SETUP AND START
+  //--------------------------------------------------------------------------------
+  esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);  // set wakeup time
   Serial.println("Setup ESP32 to sleep for every " + String(TIME_TO_SLEEP) + " Seconds");
 
   Serial.println("Going to sleep now");
-  Serial.flush(); 
-  esp_deep_sleep_start();
+  Serial.flush();         // wait for finish serial prints
+  esp_deep_sleep_start(); // entry in deep sleep mode
+  //--------------------------------------------------------------------------------
   Serial.println("This will never be printed");
 }
 
