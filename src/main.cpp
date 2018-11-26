@@ -6,6 +6,8 @@
 #include <PubSubClient.h>
 #include <esp_wifi.h>
 #include <IPAddress.h>
+#include <esp_bt_main.h>
+#include <esp_bt.h>
 
 #define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
 #define TIME_TO_SLEEP  10       /* Time ESP32 will go to sleep (in seconds) */
@@ -73,6 +75,8 @@ void setup() {
   delay(3000);  // delay is needed for server accept published message
   //--------------------------------------------------------------------------------
 
+  esp_bluedroid_disable();
+  esp_bt_controller_disable();
   esp_wifi_stop();
 
   // DEEP SLEEP MODE SETUP AND START
