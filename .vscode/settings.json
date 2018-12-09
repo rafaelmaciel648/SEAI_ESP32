@@ -2,5 +2,14 @@
     "terminal.integrated.env.windows": {
         "PATH": "C:\\Users\\rafae\\.platformio\\penv\\Scripts;C:\\Users\\rafae\\.platformio\\penv;C:\\Python27\\;C:\\Python27\\Scripts;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\LLVM\\bin;C:\\Program Files\\Git\\cmd;C:\\Program Files\\doxygen\\bin;C:\\Users\\rafae\\AppData\\Local\\Programs\\Python\\Python37\\Scripts\\;C:\\Users\\rafae\\AppData\\Local\\Programs\\Python\\Python37\\;C:\\Users\\rafae\\AppData\\Local\\Microsoft\\WindowsApps;;C:\\Users\\rafae\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Python27\\;C:\\Python27\\Scripts;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\LLVM\\bin;C:\\Program Files\\Git\\cmd;C:\\Program Files\\doxygen\\bin;C:\\Users\\rafae\\AppData\\Local\\Programs\\Python\\Python37\\Scripts\\;C:\\Users\\rafae\\AppData\\Local\\Programs\\Python\\Python37\\;C:\\Users\\rafae\\AppData\\Local\\Microsoft\\WindowsApps;;C:\\Users\\rafae\\AppData\\Local\\Programs\\Microsoft VS Code\\bin",
         "PLATFORMIO_CALLER": "vscode"
+    },
+    "files.associations": {
+        "wifi.h": "c",
+        "esp_wifi.h": "c",
+        "functional": "cpp",
+        "array": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "initializer_list": "cpp"
     }
 }
