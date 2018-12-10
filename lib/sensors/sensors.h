@@ -9,7 +9,7 @@
 #define TURB_PIN 26                 //ADC1_CH1
 #define DENS_PIN 27                 //ADC1_CH2
 
-OneWire oneWire(TEMP_PIN);                  // Setup a oneWire instance to communicate with any OneWire devices
+OneWire oneWire(TEMP_PIN);          // Setup a oneWire instance to communicate with any OneWire devices
 DallasTemperature sensors(&oneWire);// Pass our oneWire reference to Dallas Temperature.
 
 /**
@@ -41,10 +41,8 @@ void powerOff(void){
 /**
  * @brief Read value of TEMPERATURE sensor;
  * @params
- * 
+ * NOTE: temp multiply by 1/128
  */
-
-//SEE: temp multiply by 1/128
 uint16_t temp_read(){
     uint8_t i;
     sensors.getAddress(&i, 0);
@@ -56,9 +54,8 @@ uint16_t temp_read(){
 /**
  * @brief Read value of TURBIDITY sensor;
  * @params
- *
+ * NOTE: max value = 4095
  */
-//SEE: max value = 4095
 uint16_t turb_read(){
     return analogRead(TURB_PIN);
 }
@@ -66,9 +63,9 @@ uint16_t turb_read(){
 /**
  * @brief Read value of DENSITY sensor;
  * @params
- *
+ * NOTE: aproxi: 200-3000
+ * NOTE: 0.997 density of wine samples
  */
-//SEE: aproxi: 200-3000
 uint16_t dens_read(){
     return analogRead(DENS_PIN);
 }

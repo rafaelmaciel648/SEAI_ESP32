@@ -44,7 +44,7 @@ void mqtt_connect(){
         Serial.print("Connecting to " + String(broker_ip));
         //if(client.connect(clientID)){                           // Line for MQTT local server
         if(client.connect(clientID, brokerUser, brokerPass)){     // Line for MQTT online server
-        Serial.println(": Connected.");
+            Serial.println(": Connected.");
         } else{
             Serial.println(": [Error] Not connected: " + String(client.state()) + " Wait 5 seconds before retry.");
             delay(5000);

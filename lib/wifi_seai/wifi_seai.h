@@ -10,12 +10,14 @@ const char* pass = "1234567890esp";
 
 IPAddress espIP, gatewayIP;
 
-/* Configuration for wifi network with static IP */
-/*
-IPAddress ip(192, 168, 1, 34);          // ESP IP, if static
-IPAddress gateway(192, 168, 1, 1);      // Gateway IP
+/* UNCOMMENT for Configuration of wifi network with static IP */
+/* 
+IPAddress ip(192, 168, 43, 72);          // ESP IP, if static
+IPAddress gateway(192, 168, 43, 1);      // Gateway IP
 IPAddress subnet(255, 255, 255, 0);     // Subnet mask
-*/
+IPAddress primaryDNS(8, 8, 8, 8);       // Primary DNS (optional)
+IPAddress secundaryDNS(8, 8, 4, 4);     // Secundary DNS (optional)
+  */
 
 /**
  * @brief Connect to wifi network;
@@ -28,9 +30,15 @@ void setupWifi(){
   //WiFi.forceSleepWake();
   //delay(1);
   
-  WiFi.mode(WIFI_STA);            // Set WIFI mode
 
-  //WiFi.config( ip, gateway, subnet ); // Setup static IP configuration
+  if(!WiFi.mode(WIFI_STA)){
+    Serial.println("Error: set STA mode."); // Set WIFI mode
+  }            
+
+  // Setup static IP configuration
+  /* if(!WiFi.config( ip, gateway, subnet, primaryDNS, secundaryDNS )){
+    Serial.println("Error: STA Failed to configure");
+  } */
 
   delay(100);
   Serial.print("\nConnecting to wifi: " + String(ssid) + " ");
@@ -45,7 +53,7 @@ void setupWifi(){
 
   espIP = WiFi.localIP();
   gatewayIP = WiFi.gatewayIP();
-  Serial.print("\nConnected. ESP32 IP: ");
+  Serial.print(" Connected.\nESP32 IP: ");
   Serial.print(espIP);
   Serial.print(" Gateway IP: ");
   Serial.println(gatewayIP);
