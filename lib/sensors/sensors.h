@@ -2,9 +2,11 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+#define POWER_CONTROL_PIN 14
+
 // SENSORS INPUTS
-#define TURB_PIN 25                 //ADC1_CH0
-#define TEMP_PIN 26                 //ADC1_CH1
+#define TEMP_PIN 25                 //ADC1_CH0
+#define TURB_PIN 26                 //ADC1_CH1
 #define DENS_PIN 27                 //ADC1_CH2
 
 OneWire oneWire(TEMP_PIN);                  // Setup a oneWire instance to communicate with any OneWire devices
@@ -17,6 +19,23 @@ DallasTemperature sensors(&oneWire);// Pass our oneWire reference to Dallas Temp
  */
 void sensors_setup(void){
     sensors.begin();
+    pinMode(POWER_CONTROL_PIN, OUTPUT);
+}
+
+/**
+ * @brief Turn on sensors power
+ * 
+ */
+void powerOn(void){
+    digitalWrite(POWER_CONTROL_PIN, HIGH);
+}
+
+/**
+ * @brief Turn off sensors power
+ * 
+ */
+void powerOff(void){
+    digitalWrite(POWER_CONTROL_PIN, LOW);
 }
 
 /**
@@ -24,11 +43,13 @@ void sensors_setup(void){
  * @params
  * 
  */
+
+//SEE: temp multiply by 1/128
 uint16_t temp_read(){
     uint8_t i;
     sensors.getAddress(&i, 0);
-    sensors.requestTemperatures();    // Send the command to get temperatures
-    return sensors.getTemp(&i);
+    sensors.requestTemperatures();      // Send the command to get temperatures
+    return sensors.getTemp(&i);         // Return raw temperature value ()
     //return sensors.getTempC(&i));  // return in degrees celsius (float)
 }
 
@@ -37,6 +58,7 @@ uint16_t temp_read(){
  * @params
  *
  */
+//SEE: max value = 4095
 uint16_t turb_read(){
     return analogRead(TURB_PIN);
 }
@@ -46,6 +68,7 @@ uint16_t turb_read(){
  * @params
  *
  */
+//SEE: aproxi: 200-3000
 uint16_t dens_read(){
     return analogRead(DENS_PIN);
 }

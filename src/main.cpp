@@ -9,41 +9,55 @@
 #include <mqtt_seai.h>
 #include <sensors.h>
 
-#define uS_TO_S_FACTOR 1000000      /* Conversion factor for micro seconds to seconds */
-#define TIME_TO_SLEEP  5            /* Time ESP32 will go to sleep (in seconds) */
+/* Uncomment for sensors test cycle */
+//#define DEBUG_SENSORS
+
+#define uS_TO_S_FACTOR 1000000      // Conversion factor for micro seconds to seconds
+#define TIME_TO_SLEEP  5            // Time ESP32 will go to sleep (in seconds)
 
 #define moduleID 123                // sensor module ID between 1-3
 
 WiFiClient espClient;               // Wifi client
 
 
+// Function to run after micro wake
 void RTC_IRAM_ATTR esp_wake_deep_sleep(void) {
   esp_default_wake_deep_sleep();
   // Add additional functionality here
-  WiFi.mode( WIFI_OFF );
+  WiFi.mode( WIFI_OFF );            // Turn off wifi
   delay( 1 );
 }
 
 
 void setup() {
-  WiFi.mode( WIFI_OFF );
+  WiFi.mode( WIFI_OFF );            // Just for sure that is wifi is off
 
-  Serial.begin(115200);           // Init Serial Monitor
+  Serial.begin(115200);             // Init Serial Monitor
   
-  sensors_setup();
+  sensors_setup();                  // Setup sensors functions
 
   // FUNCTION TO READ SENSORS DATA AND CONSTRUCT STRING DATA
   //--------------------------------------------------------------------------------
+  powerOn();                        // Turn on sensors power
   String mes = String( String(moduleID) + "," + String(temp_read()) + "," + String(turb_read()) + "," + String(dens_read()) );
+  powerOff();                       // Turn on sensors power
   char data[(mes.length())+1];
   mes.toCharArray(data,mes.length() + 1);
   //--------------------------------------------------------------------------------
 
-  setupWifi();                    // Setup WiFi
-  setupmqtt(espClient);           // Connect to MQTT server
-  delay(100);
+  #ifdef DEBUG_SENSORS
+    powerOn();
+    while(1){
+      String aux = String( String(moduleID) + "," + String(temp_read()) + "," + String(turb_read()) + "," + String(dens_read()) );
+      Serial.println(aux);
+      delay(1000);
+    }
+  #endif
 
-  mqtt_connect();
+  setupWifi();                    // Setup WiFi
+  setupmqtt(espClient);           // Setup MQTT server
+  delay(100);
+  mqtt_connect();                 // Connect to MQTT server
 
   // PUBLISH DATA DO MQTT SERVER
   //--------------------------------------------------------------------------------
@@ -61,7 +75,6 @@ void setup() {
   //--------------------------------------------------------------------------------
   esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);  // set wakeup time
   Serial.println("Setup ESP32 to sleep for every " + String(TIME_TO_SLEEP) + " Seconds");
-
   Serial.println("Going to sleep now");
   Serial.flush();                 // wait for finish serial prints
   esp_deep_sleep_start();         // entry in deep sleep mode

@@ -45,7 +45,7 @@ void setupWifi(){
 
   espIP = WiFi.localIP();
   gatewayIP = WiFi.gatewayIP();
-  Serial.print(" Connected. ESP32 IP: ");
+  Serial.print("\nConnected. ESP32 IP: ");
   Serial.print(espIP);
   Serial.print(" Gateway IP: ");
   Serial.println(gatewayIP);
