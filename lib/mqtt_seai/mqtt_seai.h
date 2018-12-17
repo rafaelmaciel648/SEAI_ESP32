@@ -8,12 +8,19 @@ PubSubClient client;
 const char* clientID = "FEUP_SEAI"; // MQTT client ID
 
 /******   ONLINE BROKER  ******/
-const char* brokerUser = "jbeleza.tr@gmail.com";
+/* const char* brokerUser = "jbeleza.tr@gmail.com";
 const char* brokerPass = "6ec21d8d";
 const char* broker = "mqtt.dioty.co";
 const char* broker_ip = "mqtt.dioty.co";
 const uint16_t port = 1883;
-const char* outTopic = "/jbeleza.tr@gmail.com/out";
+const char* outTopic = "/jbeleza.tr@gmail.com/out"; */
+
+const char* brokerUser = "rafaelmaciel648@gmail.com";
+const char* brokerPass = "cdce8090";
+const char* broker = "mqtt.dioty.co";
+const char* broker_ip = "mqtt.dioty.co";
+const uint16_t port = 1883;
+const char* outTopic = "/rafaelmaciel648@gmail.com/out";
 
 /******   LOCAL BROKER  ******/
 /* const char* broker_ip = "192.168.43.64";

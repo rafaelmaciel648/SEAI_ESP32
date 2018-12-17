@@ -9,8 +9,10 @@
 #include <mqtt_seai.h>
 #include <sensors.h>
 
-/* Uncomment for sensors test cycle */
-//#define DEBUG_SENSORS
+/* Uncomment for tests */
+#define DEBUG_SENSORS
+//#define DEBUG_POWER
+//#define DEBUG_SERIAL
 
 #define uS_TO_S_FACTOR 1000000      // Conversion factor for micro seconds to seconds
 #define TIME_TO_SLEEP  5            // Time ESP32 will go to sleep (in seconds)
@@ -21,24 +23,28 @@ WiFiClient espClient;               // Wifi client
 
 
 // Function to run after micro wake
-void RTC_IRAM_ATTR esp_wake_deep_sleep(void) {
+/* void RTC_IRAM_ATTR esp_wake_deep_sleep(void) {
   esp_default_wake_deep_sleep();
   // Add additional functionality here
   WiFi.mode( WIFI_OFF );            // Turn off wifi
   delay( 1 );
-}
+} */
 
 
 void setup() {
   WiFi.mode( WIFI_OFF );            // Just for sure that is wifi is off
-
-  Serial.begin(115200);             // Init Serial Monitor
+  esp_bluedroid_disable();        // Disable bluetooth driver
+  esp_bt_controller_disable();    // Disable bluetooth driver before deep sleep
+  esp_wifi_stop();                // Disable WIFI driver before deep sleep
   
+  Serial.begin(115200);             // Init Serial Monitor
+
   sensors_setup();                  // Setup sensors functions
 
   // FUNCTION TO READ SENSORS DATA AND CONSTRUCT STRING DATA
   //--------------------------------------------------------------------------------
   powerOn();                        // Turn on sensors power
+  delay(2000);
   String mes = String( String(moduleID) + "," + String(temp_read()) + "," + String(turb_read()) + "," + String(dens_read()) );
   powerOff();                       // Turn on sensors power
   char data[(mes.length())+1];
@@ -54,19 +60,20 @@ void setup() {
     }
   #endif
 
-  setupWifi();                    // Setup WiFi
-  setupmqtt(espClient);           // Setup MQTT server
-  delay(100);
-  mqtt_connect();                 // Connect to MQTT server
+  if(setupWifi()){                  // Setup WiFi
+    setupmqtt(espClient);           // Setup MQTT server
+    delay(100);
+    mqtt_connect();                 // Connect to MQTT server
 
-  // PUBLISH DATA DO MQTT SERVER
-  //--------------------------------------------------------------------------------
-  publish(outTopic, data);        // publish message in specific topic
-  delay(3000);                    // delay is needed for server accept published message
-  //--------------------------------------------------------------------------------
+    // PUBLISH DATA DO MQTT SERVER
+    //--------------------------------------------------------------------------------
+    publish(outTopic, data);        // publish message in specific topic
+    delay(3000);                    // delay is needed for server accept published message
+    //--------------------------------------------------------------------------------
 
-
-  esp_wifi_disconnect();          // Disconnect from network
+    esp_wifi_disconnect();          // Disconnect from network
+  }
+  
   esp_bluedroid_disable();        // Disable bluetooth driver
   esp_bt_controller_disable();    // Disable bluetooth driver before deep sleep
   esp_wifi_stop();                // Disable WIFI driver before deep sleep
@@ -77,6 +84,7 @@ void setup() {
   Serial.println("Setup ESP32 to sleep for every " + String(TIME_TO_SLEEP) + " Seconds");
   Serial.println("Going to sleep now");
   Serial.flush();                 // wait for finish serial prints
+
   esp_deep_sleep_start();         // entry in deep sleep mode
   //--------------------------------------------------------------------------------
 }

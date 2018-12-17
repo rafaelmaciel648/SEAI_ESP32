@@ -3,6 +3,7 @@
 #include <DallasTemperature.h>
 
 #define POWER_CONTROL_PIN 14
+#define POWER_TEMP_PIN 12
 
 // SENSORS INPUTS
 #define TEMP_PIN 25                 //ADC1_CH0
@@ -20,6 +21,9 @@ DallasTemperature sensors(&oneWire);// Pass our oneWire reference to Dallas Temp
 void sensors_setup(void){
     sensors.begin();
     pinMode(POWER_CONTROL_PIN, OUTPUT);
+    digitalWrite(POWER_CONTROL_PIN, LOW);
+    pinMode(POWER_TEMP_PIN, OUTPUT);
+    digitalWrite(POWER_TEMP_PIN, LOW);
 }
 
 /**
@@ -28,6 +32,7 @@ void sensors_setup(void){
  */
 void powerOn(void){
     digitalWrite(POWER_CONTROL_PIN, HIGH);
+    digitalWrite(POWER_TEMP_PIN, HIGH);
 }
 
 /**
@@ -36,6 +41,7 @@ void powerOn(void){
  */
 void powerOff(void){
     digitalWrite(POWER_CONTROL_PIN, LOW);
+    digitalWrite(POWER_TEMP_PIN, LOW);
 }
 
 /**
