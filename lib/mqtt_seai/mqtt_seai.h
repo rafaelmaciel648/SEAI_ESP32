@@ -5,7 +5,7 @@
 
 PubSubClient client;
 
-const char* clientID = "FEUP_SEAI"; // MQTT client ID
+const char* clientID = "FEUP_SEAI2"; // MQTT client ID
 
 /******   ONLINE BROKER  ******/
 /* const char* brokerUser = "jbeleza.tr@gmail.com";
@@ -48,13 +48,13 @@ void setupmqtt(WiFiClient wifiClient){
  */
 void mqtt_connect(){
     while(!client.connected()){
-        Serial.print("Connecting to " + String(broker_ip));
+        //Serial.print("Connecting to " + String(broker_ip));
         //if(client.connect(clientID)){                           // Line for MQTT local server
         if(client.connect(clientID, brokerUser, brokerPass)){     // Line for MQTT online server
-            Serial.println(": Connected.");
+            //Serial.println(": Connected.");
         } else{
-            Serial.println(": [Error] Not connected: " + String(client.state()) + " Wait 5 seconds before retry.");
-            delay(5000);
+            //Serial.println(": [Error] Not connected: " + String(client.state()) + " Wait 5 seconds before retry.");
+            delay(3000);
         }
     }
 }
@@ -68,7 +68,7 @@ void mqtt_connect(){
 void publish(const char* topic, char* m){
     char messages[strlen(m)];
     snprintf(messages, (strlen(m)+1) , m);
-    Serial.println("Sending: " + String(messages));
+    //Serial.println("Sending: " + String(messages));
     client.publish(topic, messages);
 }
 

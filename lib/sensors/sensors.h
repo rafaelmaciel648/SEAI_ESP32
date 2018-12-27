@@ -63,7 +63,13 @@ uint16_t temp_read(){
  * NOTE: max value = 4095
  */
 uint16_t turb_read(){
-    return analogRead(TURB_PIN);
+    uint8_t i;
+    uint16_t avg=0;
+    for(i=0; i<20; i++){
+        avg = avg + analogRead(TURB_PIN);
+    }
+    avg = avg / 20;
+    return avg;
 }
 
 /**

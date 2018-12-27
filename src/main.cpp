@@ -10,7 +10,7 @@
 #include <sensors.h>
 
 /* Uncomment for tests */
-#define DEBUG_SENSORS
+//#define DEBUG_SENSORS
 //#define DEBUG_POWER
 //#define DEBUG_SERIAL
 
@@ -33,18 +33,14 @@ WiFiClient espClient;               // Wifi client
 
 void setup() {
   WiFi.mode( WIFI_OFF );            // Just for sure that is wifi is off
-  esp_bluedroid_disable();        // Disable bluetooth driver
-  esp_bt_controller_disable();    // Disable bluetooth driver before deep sleep
-  esp_wifi_stop();                // Disable WIFI driver before deep sleep
+  //esp_wifi_stop();                // Disable WIFI driver before deep sleep
   
-  Serial.begin(115200);             // Init Serial Monitor
-
   sensors_setup();                  // Setup sensors functions
 
   // FUNCTION TO READ SENSORS DATA AND CONSTRUCT STRING DATA
   //--------------------------------------------------------------------------------
   powerOn();                        // Turn on sensors power
-  delay(2000);
+  delay(2000);  //ATTENTION
   String mes = String( String(moduleID) + "," + String(temp_read()) + "," + String(turb_read()) + "," + String(dens_read()) );
   powerOff();                       // Turn on sensors power
   char data[(mes.length())+1];
@@ -74,17 +70,13 @@ void setup() {
     esp_wifi_disconnect();          // Disconnect from network
   }
   
-  esp_bluedroid_disable();        // Disable bluetooth driver
-  esp_bt_controller_disable();    // Disable bluetooth driver before deep sleep
+  /* esp_bluedroid_disable();        // Disable bluetooth driver
+  esp_bt_controller_disable();    // Disable bluetooth driver before deep sleep */
   esp_wifi_stop();                // Disable WIFI driver before deep sleep
 
   // DEEP SLEEP MODE SETUP AND START
   //--------------------------------------------------------------------------------
   esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);  // set wakeup time
-  Serial.println("Setup ESP32 to sleep for every " + String(TIME_TO_SLEEP) + " Seconds");
-  Serial.println("Going to sleep now");
-  Serial.flush();                 // wait for finish serial prints
-
   esp_deep_sleep_start();         // entry in deep sleep mode
   //--------------------------------------------------------------------------------
 }

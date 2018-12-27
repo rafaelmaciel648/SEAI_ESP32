@@ -35,7 +35,7 @@ bool setupWifi(){
   
 
   if(!WiFi.mode(WIFI_STA)){
-    Serial.println("Error: set STA mode."); // Set WIFI mode
+    //Serial.println("Error: set STA mode."); // Set WIFI mode
   }            
 
   // Setup static IP configuration
@@ -44,13 +44,13 @@ bool setupWifi(){
   } */
 
   delay(100);
-  Serial.print("\nConnecting to wifi: " + String(ssid) + " ");
+  //Serial.print("\nConnecting to wifi: " + String(ssid) + " ");
   
   WiFi.begin(ssid, pass);         // Connect to network
 
   while( (WiFi.status() != WL_CONNECTED) && (i<100) ){   // Wait connection finish
     delay(100);
-    Serial.print(".");
+    //Serial.print(".");
     i++;
   }
 
@@ -58,13 +58,13 @@ bool setupWifi(){
     return false;
   }
 
-  espIP = WiFi.localIP();
+  /* espIP = WiFi.localIP();
   gatewayIP = WiFi.gatewayIP();
   Serial.print(" Connected.\nESP32 IP: ");
   Serial.print(espIP);
   Serial.print(" Gateway IP: ");
   Serial.println(gatewayIP);
-
+ */
   return true;
 
 }
