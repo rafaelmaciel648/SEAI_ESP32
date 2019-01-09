@@ -3,45 +3,46 @@
 #include <PubSubClient.h>
 #include <esp_wifi.h>
 #include <IPAddress.h>
-#include <esp_bt_main.h>
-#include <esp_bt.h>
 #include <wifi_seai.h>
 #include <mqtt_seai.h>
 #include <sensors.h>
 
+
 /* Uncomment for tests */
 //#define DEBUG_SENSORS
-//#define DEBUG_POWER
 //#define DEBUG_SERIAL
+#define DEBUG_RANDOM
+
+#define moduleID 1                  // sensor module ID between 1-9
 
 #define uS_TO_S_FACTOR 1000000      // Conversion factor for micro seconds to seconds
-#define TIME_TO_SLEEP  5            // Time ESP32 will go to sleep (in seconds)
-
-#define moduleID 123                // sensor module ID between 1-3
+#define TIME_TO_SLEEP  30           // Time ESP32 will go to sleep (in seconds)
 
 WiFiClient espClient;               // Wifi client
 
 
-// Function to run after micro wake
-/* void RTC_IRAM_ATTR esp_wake_deep_sleep(void) {
-  esp_default_wake_deep_sleep();
-  // Add additional functionality here
-  WiFi.mode( WIFI_OFF );            // Turn off wifi
-  delay( 1 );
-} */
-
-
 void setup() {
+  //Serial.begin(115200);
   WiFi.mode( WIFI_OFF );            // Just for sure that is wifi is off
-  //esp_wifi_stop();                // Disable WIFI driver before deep sleep
-  
-  sensors_setup();                  // Setup sensors functions
+
+  sensors_setup();            // Setup sensors functions
 
   // FUNCTION TO READ SENSORS DATA AND CONSTRUCT STRING DATA
   //--------------------------------------------------------------------------------
   powerOn();                        // Turn on sensors power
-  delay(2000);  //ATTENTION
-  String mes = String( String(moduleID) + "," + String(temp_read()) + "," + String(turb_read()) + "," + String(dens_read()) );
+  delay(1000);  //ATTENTION
+
+  uint16_t dens_diff, dens1, dens2;
+  dens1 = dens_read(1);
+  dens2 = dens_read(2);
+  dens_diff = dens1 - dens2 - 9;    // Error offset
+
+  #ifdef DEBUG_RANDOM
+    String mes = String( String(moduleID) + "," + String(random(896,4480)) + "," + String(random(3500,3700)) + "," + String(random(10,25)) );
+    #else
+    String mes = String( String(moduleID) + "," + String(temp_read()) + "," + String(turb_read())  + "," + String(dens_diff));
+  #endif
+  
   powerOff();                       // Turn on sensors power
   char data[(mes.length())+1];
   mes.toCharArray(data,mes.length() + 1);
@@ -69,12 +70,10 @@ void setup() {
 
     esp_wifi_disconnect();          // Disconnect from network
   }
-  
-  /* esp_bluedroid_disable();        // Disable bluetooth driver
-  esp_bt_controller_disable();    // Disable bluetooth driver before deep sleep */
-  esp_wifi_stop();                // Disable WIFI driver before deep sleep
 
-  // DEEP SLEEP MODE SETUP AND START
+  esp_wifi_stop();                  // Disable WIFI driver before deep sleep
+
+  // DEEP SLEEP ROUTINE: mode setup and start
   //--------------------------------------------------------------------------------
   esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);  // set wakeup time
   esp_deep_sleep_start();         // entry in deep sleep mode
@@ -83,4 +82,3 @@ void setup() {
 
 void loop() {
 }
-

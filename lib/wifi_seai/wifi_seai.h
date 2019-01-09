@@ -5,13 +5,8 @@
 
 // ToDo - configure connection with static IP
 
-/* const char* ssid = "HUAWEI";
-const char* pass = "1234567890esp"; */
-
-const char* ssid = "RUFFIEoMalvado";
-const char* pass = "esquadraofirmeza";
-
-IPAddress espIP, gatewayIP;
+const char* ssid = "OnePlus5";
+const char* pass = "1234567890esp";
 
 /* UNCOMMENT for Configuration of wifi network with static IP */
 /* 
@@ -44,13 +39,11 @@ bool setupWifi(){
   } */
 
   delay(100);
-  //Serial.print("\nConnecting to wifi: " + String(ssid) + " ");
   
-  WiFi.begin(ssid, pass);         // Connect to network
+  WiFi.begin(ssid, pass);                               // Connect to network
 
-  while( (WiFi.status() != WL_CONNECTED) && (i<100) ){   // Wait connection finish
+  while( (WiFi.status() != WL_CONNECTED) && (i<100) ){  // Wait connection finish
     delay(100);
-    //Serial.print(".");
     i++;
   }
 
@@ -58,13 +51,6 @@ bool setupWifi(){
     return false;
   }
 
-  /* espIP = WiFi.localIP();
-  gatewayIP = WiFi.gatewayIP();
-  Serial.print(" Connected.\nESP32 IP: ");
-  Serial.print(espIP);
-  Serial.print(" Gateway IP: ");
-  Serial.println(gatewayIP);
- */
   return true;
 
 }
