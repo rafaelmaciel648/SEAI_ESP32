@@ -7,11 +7,10 @@
 #include <mqtt_seai.h>
 #include <sensors.h>
 
-
 /* Uncomment for tests */
 //#define DEBUG_SENSORS
 //#define DEBUG_SERIAL
-#define DEBUG_RANDOM
+//#define DEBUG_RANDOM
 
 #define moduleID 1                  // sensor module ID between 1-9
 
@@ -19,7 +18,6 @@
 #define TIME_TO_SLEEP  30           // Time ESP32 will go to sleep (in seconds)
 
 WiFiClient espClient;               // Wifi client
-
 
 void setup() {
   //Serial.begin(115200);
