@@ -3,32 +3,32 @@
 #include <WiFi.h>
 #include <IPAddress.h>
 
+#define LOCAL_SERVER
+//#define ONLINE_SERVER
+
+
 PubSubClient client;
 
-const char* clientID = "FEUP_SEAI"; // MQTT client ID
-
-/******   ONLINE BROKER  ******/
-/* const char* brokerUser = "jbeleza.tr@gmail.com";
-const char* brokerPass = "6ec21d8d";
-const char* broker = "mqtt.dioty.co";
-const char* broker_ip = "mqtt.dioty.co";
-const uint16_t port = 1883;
-const char* outTopic = "/jbeleza.tr@gmail.com/out"; */
-
-const char* brokerUser = "rafaelmaciel648@gmail.com";
-const char* brokerPass = "cdce8090";
-const char* broker = "mqtt.dioty.co";
-const char* broker_ip = "mqtt.dioty.co";
-const uint16_t port = 1883;
-const char* outTopic = "/rafaelmaciel648@gmail.com/out";
+const char* clientID = "FEUP_SEAI2"; // MQTT client ID
 
 /******   LOCAL BROKER  ******/
-/* const char* broker_ip = "192.168.43.64";
-IPAddress broker(192,168,43,64);
-//IPAddress broker = IPAddress().fromString(broker_ip);
-const uint16_t port = 1883;
-const char* outTopic = "topic"; */
+#ifdef LOCAL_SERVER
+    //const char* broker_ip = "192.168.43.64";
+    //IPAddress broker1 = IPAddress().fromString(broker_ip);
+    IPAddress broker(192,168,43,224);
+    const uint16_t port = 1883;
+    const char* outTopic = "topic";
+#endif
 
+/******   ONLINE BROKER  ******/
+#ifdef ONLINE_SERVER
+    const char* brokerUser = "rafaelmaciel648@gmail.com";
+    const char* brokerPass = "cdce8090";
+    const char* broker = "mqtt.dioty.co";
+    const char* broker_ip = "mqtt.dioty.co";
+    const uint16_t port = 1883;
+    const char* outTopic = "/rafaelmaciel648@gmail.com/out";
+#endif
 
 /**
  * @brief Setup MQTT server;
@@ -48,13 +48,16 @@ void setupmqtt(WiFiClient wifiClient){
  */
 void mqtt_connect(){
     while(!client.connected()){
-        Serial.print("Connecting to " + String(broker_ip));
-        //if(client.connect(clientID)){                           // Line for MQTT local server
-        if(client.connect(clientID, brokerUser, brokerPass)){     // Line for MQTT online server
-            Serial.println(": Connected.");
+        #ifdef LOCAL_SERVER                                         // Block for MQTT local server
+            if(client.connect(clientID)){                           
+        #endif
+
+        #ifdef ONLINE_SERVER
+            if(client.connect(clientID, brokerUser, brokerPass)){   // Block for MQTT online server
+        #endif
+        
         } else{
-            Serial.println(": [Error] Not connected: " + String(client.state()) + " Wait 5 seconds before retry.");
-            delay(5000);
+            delay(3000);
         }
     }
 }
@@ -68,7 +71,6 @@ void mqtt_connect(){
 void publish(const char* topic, char* m){
     char messages[strlen(m)];
     snprintf(messages, (strlen(m)+1) , m);
-    Serial.println("Sending: " + String(messages));
     client.publish(topic, messages);
 }
 
